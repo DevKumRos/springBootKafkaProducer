@@ -25,11 +25,24 @@ public class LibraryEventsRestService {
 	public ResponseEntity<LibraryEvent> addBookToLibrary(@RequestBody LibraryEvent libraryEvent) throws JsonProcessingException {
 		
 		log.info("Before Call Library Event");
-		//invoke kafka producer. Asynchronoss call
-		//libraryEventsProducer.sendLibraryEvent(libraryEvent);
+		/*invoke kafka producer. Asynchronoss call Approach 1
+		 * 
+		 libraryEventsProducer.sendLibraryEvent(libraryEvent);
+		 
+		 */
 		
+		/* invoke kafka producer. Synchronoss call
+		 * 
 		SendResult<Integer, String> sendResult = libraryEventsProducer.sendLibraryEventSynchronoss(libraryEvent);
 		log.info("sendResult details {}", sendResult.toString());
+		
+		*/
+		
+		/*invoke kafka producer. Asynchronoss call Approach 2
+		 */
+		 libraryEventsProducer.sendLibraryEvent_Approach2(libraryEvent);
+		 
+		 
 		log.info("After Call Library Event");
 		
 		

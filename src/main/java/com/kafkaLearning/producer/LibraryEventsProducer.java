@@ -1,7 +1,12 @@
 package com.kafkaLearning.producer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -46,6 +51,28 @@ public class LibraryEventsProducer {
 		String value = objectMapper.writeValueAsString(libraryEvent);
 		//read topic from application.properties
 		ListenableFuture<SendResult<Integer, String>> listenableFuture = kafkaTemplate.send("library-events",key, value);
+		listenableFutureCallback(key, value, listenableFuture);
+	}
+	
+	public void sendLibraryEvent_Approach2(LibraryEvent libraryEvent) throws JsonProcessingException {
+		Integer key = libraryEvent.getLibraryEventId();
+		String value = objectMapper.writeValueAsString(libraryEvent);
+		ProducerRecord<Integer, String> producerRecord = createProducerRecord(key, value);
+		//read topic from application.properties
+		ListenableFuture<SendResult<Integer, String>> listenableFuture = kafkaTemplate.send(producerRecord);
+		listenableFutureCallback(key, value, listenableFuture);
+	}
+	
+	private ProducerRecord<Integer, String> createProducerRecord(Integer key, String value) {
+		// Header to pass additional information & consumer can consume based on header
+		List<Header> recordHeader = new ArrayList<>();
+		recordHeader.add(new RecordHeader("event-source", "scanner".getBytes()));
+		recordHeader.add(new RecordHeader("event-source", "mannual".getBytes()));
+		
+		return new ProducerRecord<Integer, String>("library-events", null, key, value, recordHeader);
+	}
+
+	private void listenableFutureCallback(Integer key, String value, ListenableFuture<SendResult<Integer, String>> listenableFuture) {
 		listenableFuture.addCallback(new ListenableFutureCallback<SendResult<Integer, String>>() {
 
 			@Override
