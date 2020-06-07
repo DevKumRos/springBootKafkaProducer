@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kafkaLearning.domain.LibraryEvent;
+import com.kafkaLearning.domain.LibraryEventType;
 import com.kafkaLearning.producer.LibraryEventsProducer;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class LibraryEventsRestService {
 		
 		/*invoke kafka producer. Asynchronoss call Approach 2
 		 */
+		 libraryEvent.setLibraryEventType(LibraryEventType.NEW);
 		 libraryEventsProducer.sendLibraryEvent_Approach2(libraryEvent);
 		 
 		 
