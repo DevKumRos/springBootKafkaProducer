@@ -1,5 +1,7 @@
 package com.kafkaLearning.producer;
 
+import java.util.concurrent.ExecutionException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -22,6 +24,22 @@ public class LibraryEventsProducer {
 	
 	@Autowired
 	ObjectMapper objectMapper;
+	
+	public SendResult<Integer, String> sendLibraryEventSynchronoss(LibraryEvent libraryEvent) throws JsonProcessingException {
+		Integer key = libraryEvent.getLibraryEventId();
+		String value = objectMapper.writeValueAsString(libraryEvent);
+		SendResult<Integer, String> sendResult = null;
+		try {
+			sendResult = kafkaTemplate.send("library-events",key, value).get();
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			log.error("InterruptedException/ExecutionException while sending the message & exception is {}", e.getMessage());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			log.error("Exception while sending the message & exception is {}", e.getMessage());
+		}
+		return sendResult;
+	}
 	
 	public void sendLibraryEvent(LibraryEvent libraryEvent) throws JsonProcessingException {
 		Integer key = libraryEvent.getLibraryEventId();
