@@ -54,13 +54,14 @@ public class LibraryEventsProducer {
 		listenableFutureCallback(key, value, listenableFuture);
 	}
 	
-	public void sendLibraryEvent_Approach2(LibraryEvent libraryEvent) throws JsonProcessingException {
+	public ListenableFuture<SendResult<Integer, String>> sendLibraryEvent_Approach2(LibraryEvent libraryEvent) throws JsonProcessingException {
 		Integer key = libraryEvent.getLibraryEventId();
 		String value = objectMapper.writeValueAsString(libraryEvent);
 		ProducerRecord<Integer, String> producerRecord = createProducerRecord(key, value);
 		//read topic from application.properties
 		ListenableFuture<SendResult<Integer, String>> listenableFuture = kafkaTemplate.send(producerRecord);
 		listenableFutureCallback(key, value, listenableFuture);
+		return listenableFuture;
 	}
 	
 	private ProducerRecord<Integer, String> createProducerRecord(Integer key, String value) {

@@ -42,7 +42,7 @@ public class LibraryEventsRestServiceUnitTest {
 				book(book).libraryEventType(LibraryEventType.NEW).build();
 		
 		String libraryEventStr = objectMapper.writeValueAsString(libraryEvent);
-		Mockito.doNothing().when(libraryEventsProducer).sendLibraryEvent_Approach2(libraryEvent);
+		Mockito.when(libraryEventsProducer.sendLibraryEvent_Approach2(libraryEvent)).thenReturn(null);
 		
 		mvc.perform(MockMvcRequestBuilders.post("/v1/libraryevent").contentType(MediaType.APPLICATION_JSON).
 				content(libraryEventStr)).andExpect(status().isCreated());
@@ -59,7 +59,7 @@ public class LibraryEventsRestServiceUnitTest {
 				book(null).libraryEventType(LibraryEventType.NEW).build();
 		
 		String libraryEventStr = objectMapper.writeValueAsString(libraryEvent);
-		Mockito.doNothing().when(libraryEventsProducer).sendLibraryEvent_Approach2(libraryEvent);
+		Mockito.when(libraryEventsProducer.sendLibraryEvent_Approach2(libraryEvent)).thenReturn(null);
 		String exceptedError = "book - must not be null";
 		mvc.perform(MockMvcRequestBuilders.post("/v1/libraryevent").contentType(MediaType.APPLICATION_JSON).
 				content(libraryEventStr)).andExpect(status().isBadRequest()).
@@ -77,7 +77,7 @@ public class LibraryEventsRestServiceUnitTest {
 				book(new Book()).libraryEventType(LibraryEventType.NEW).build();
 		
 		String libraryEventStr = objectMapper.writeValueAsString(libraryEvent);
-		Mockito.doNothing().when(libraryEventsProducer).sendLibraryEvent_Approach2(libraryEvent);
+		Mockito.when(libraryEventsProducer.sendLibraryEvent_Approach2(libraryEvent)).thenReturn(null);
 		String exceptedError ="book.bookAuthor - must not be blank,book.bookId - must not be null,book.bookName - must not be blank";
 		mvc.perform(MockMvcRequestBuilders.post("/v1/libraryevent").contentType(MediaType.APPLICATION_JSON).
 				content(libraryEventStr)).andExpect(status().isBadRequest()).
