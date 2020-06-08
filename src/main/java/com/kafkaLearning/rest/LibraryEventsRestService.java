@@ -22,6 +22,7 @@ public class LibraryEventsRestService {
 	@Autowired
 	LibraryEventsProducer libraryEventsProducer;
 	
+
 	@PostMapping("/v1/libraryevent")
 	public ResponseEntity<LibraryEvent> addBookToLibrary(@RequestBody LibraryEvent libraryEvent) throws JsonProcessingException {
 		
