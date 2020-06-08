@@ -84,4 +84,38 @@ public class LibraryEventsRestServiceUnitTest {
 		andExpect(content().string(exceptedError));
 		
 	}
+	
+	@Test
+	void updateLibraryEvent_withLibraryEventID() throws Exception {
+		
+		Book book = Book.builder().bookId(505).
+				bookName("Spring Kafka").bookAuthor("Kumar Nagaraju").build();
+		
+		LibraryEvent libraryEvent = LibraryEvent.builder().libraryEventId(123).
+				book(book).libraryEventType(LibraryEventType.UPDATE).build();
+		
+		String libraryEventStr = objectMapper.writeValueAsString(libraryEvent);
+		Mockito.when(libraryEventsProducer.sendLibraryEvent_Approach2(libraryEvent)).thenReturn(null);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/v1/libraryevent").contentType(MediaType.APPLICATION_JSON).
+				content(libraryEventStr)).andExpect(status().isOk());
+		
+	}
+	
+	@Test
+	void updateLibraryEvent_withoutLibraryEventID() throws Exception {
+		
+		Book book = Book.builder().bookId(505).
+				bookName("Spring Kafka").bookAuthor("Kumar Nagaraju").build();
+		
+		LibraryEvent libraryEvent = LibraryEvent.builder().libraryEventId(null).
+				book(book).libraryEventType(LibraryEventType.UPDATE).build();
+		
+		String libraryEventStr = objectMapper.writeValueAsString(libraryEvent);
+		Mockito.when(libraryEventsProducer.sendLibraryEvent_Approach2(libraryEvent)).thenReturn(null);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/v1/libraryevent").contentType(MediaType.APPLICATION_JSON).
+				content(libraryEventStr)).andExpect(status().isBadRequest());
+		
+	}
 }

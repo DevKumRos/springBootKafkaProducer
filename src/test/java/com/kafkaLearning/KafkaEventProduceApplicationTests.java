@@ -61,7 +61,7 @@ class KafkaEventProduceApplicationTests {
 	}
 
 	@Test
-	@Timeout(10)
+	@Timeout(5)
 	void postLibraryEvent() {
 		Gson g = new Gson();
 		Book book = Book.builder().bookId(505).
@@ -76,6 +76,27 @@ class KafkaEventProduceApplicationTests {
 		ResponseEntity<LibraryEvent> reponseEntity = restTemplate.exchange("/v1/libraryevent", HttpMethod.POST, httpEntity, LibraryEvent.class);
 		
 		assertEquals(HttpStatus.CREATED, reponseEntity.getStatusCode());
+		ConsumerRecord<Integer, String> consumerRecord =  KafkaTestUtils.getSingleRecord(consumer, "library-events");
+		String value = consumerRecord.value();
+		assertEquals(libraryEventStr, value);
+	}
+	
+	@Test
+	@Timeout(5)
+	void updateLibraryEvent() {
+		Gson g = new Gson();
+		Book book = Book.builder().bookId(505).
+				bookName("Spring Kafka").bookAuthor("Kumar Nagaraju").build();
+		
+		LibraryEvent libraryEvent = LibraryEvent.builder().libraryEventId(456).
+				book(book).libraryEventType(LibraryEventType.UPDATE).build();
+		String libraryEventStr = "{\"libraryEventId\":456,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":505,\"bookName\":\"Spring Kafka\",\"bookAuthor\":\"Kumar Nagaraju\"}}";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<LibraryEvent> httpEntity = new HttpEntity<LibraryEvent>(libraryEvent,headers);
+		ResponseEntity<LibraryEvent> reponseEntity = restTemplate.exchange("/v1/libraryevent", HttpMethod.PUT, httpEntity, LibraryEvent.class);
+		
+		assertEquals(HttpStatus.OK, reponseEntity.getStatusCode());
 		ConsumerRecord<Integer, String> consumerRecord =  KafkaTestUtils.getSingleRecord(consumer, "library-events");
 		String value = consumerRecord.value();
 		assertEquals(libraryEventStr, value);
