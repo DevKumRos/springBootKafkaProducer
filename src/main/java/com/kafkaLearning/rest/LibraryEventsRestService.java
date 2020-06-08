@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import com.kafkaLearning.domain.LibraryEventType;
 import com.kafkaLearning.producer.LibraryEventsProducer;
 
 import lombok.extern.slf4j.Slf4j;
+import javax.validation.*;;
 
 @RestController
 @Slf4j
@@ -24,7 +26,7 @@ public class LibraryEventsRestService {
 	
 
 	@PostMapping("/v1/libraryevent")
-	public ResponseEntity<LibraryEvent> addBookToLibrary(@RequestBody LibraryEvent libraryEvent) throws JsonProcessingException {
+	public ResponseEntity<LibraryEvent> addBookToLibrary(@Valid @RequestBody LibraryEvent libraryEvent) throws JsonProcessingException {
 		
 		log.info("Before Call Library Event");
 		/*invoke kafka producer. Asynchronoss call Approach 1

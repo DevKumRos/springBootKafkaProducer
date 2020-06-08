@@ -61,7 +61,7 @@ class KafkaEventProduceApplicationTests {
 	}
 
 	@Test
-	@Timeout(5)
+	@Timeout(10)
 	void postLibraryEvent() {
 		Gson g = new Gson();
 		Book book = Book.builder().bookId(505).
